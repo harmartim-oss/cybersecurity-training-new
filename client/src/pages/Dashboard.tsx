@@ -3,21 +3,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
-
-interface Module {
-  id: number;
-  title: string;
-  description: string;
-  icon: string;
-  color: string;
-  lessons: Lesson[];
-}
-
-interface Lesson {
-  id: number;
-  title: string;
-  duration: string;
-}
+import { modules } from '@/data/lessonContent';
+import { Award, BookOpen, Trophy, TrendingUp } from 'lucide-react';
 
 interface Progress {
   completedLessons: string[];
@@ -28,123 +15,41 @@ interface Progress {
   lastActivity: string | null;
 }
 
-const MODULES: Module[] = [
-  {
-    id: 1,
-    title: "Ontario's Privacy Landscape",
-    description: "Understanding FIPPA, MFIPPA, and PIPEDA legislation",
-    icon: "🛡️",
-    color: "blue",
-    lessons: [
-      { id: 1, title: "Introduction to Privacy Legislation", duration: "15 min" },
-      { id: 2, title: "FIPPA Deep Dive", duration: "20 min" },
-      { id: 3, title: "MFIPPA for Municipalities", duration: "18 min" },
-      { id: 4, title: "PIPEDA for Small Business", duration: "22 min" },
-      { id: 5, title: "Privacy Rights & Obligations", duration: "19 min" },
-      { id: 6, title: "Data Breach Notification", duration: "16 min" },
-      { id: 7, title: "Compliance Frameworks", duration: "21 min" },
-      { id: 8, title: "Real-World Case Studies", duration: "25 min" }
-    ]
-  },
-  {
-    id: 2,
-    title: "Cybersecurity Fundamentals",
-    description: "Essential cybersecurity practices and threat awareness",
-    icon: "🔒",
-    color: "red",
-    lessons: [
-      { id: 1, title: "Threat Landscape Overview", duration: "16 min" },
-      { id: 2, title: "Password Security & MFA", duration: "14 min" },
-      { id: 3, title: "Phishing & Social Engineering", duration: "19 min" },
-      { id: 4, title: "Incident Response Planning", duration: "25 min" },
-      { id: 5, title: "Network Security Basics", duration: "20 min" },
-      { id: 6, title: "Malware & Ransomware", duration: "18 min" },
-      { id: 7, title: "Endpoint Protection", duration: "17 min" },
-      { id: 8, title: "Security Awareness Training", duration: "22 min" },
-      { id: 9, title: "Vulnerability Management", duration: "23 min" },
-      { id: 10, title: "Incident Detection", duration: "21 min" },
-      { id: 11, title: "Forensics Basics", duration: "24 min" },
-      { id: 12, title: "Compliance & Auditing", duration: "19 min" }
-    ]
-  },
-  {
-    id: 3,
-    title: "AI & Data Governance",
-    description: "Ethical AI implementation and data management practices",
-    icon: "🧠",
-    color: "purple",
-    lessons: [
-      { id: 1, title: "AI Ethics Framework", duration: "17 min" },
-      { id: 2, title: "Data Classification & Handling", duration: "21 min" },
-      { id: 3, title: "Algorithmic Bias Prevention", duration: "23 min" },
-      { id: 4, title: "AI Governance Implementation", duration: "26 min" },
-      { id: 5, title: "Responsible AI Principles", duration: "20 min" },
-      { id: 6, title: "Data Privacy in AI Systems", duration: "22 min" }
-    ]
-  },
-  {
-    id: 4,
-    title: "Data Management Excellence",
-    description: "Best practices for data handling and lifecycle management",
-    icon: "📊",
-    color: "green",
-    lessons: [
-      { id: 1, title: "Data Lifecycle Management", duration: "18 min" },
-      { id: 2, title: "Data Quality & Integrity", duration: "19 min" },
-      { id: 3, title: "Retention & Disposal", duration: "17 min" },
-      { id: 4, title: "Data Minimization", duration: "16 min" },
-      { id: 5, title: "Backup & Recovery", duration: "21 min" },
-      { id: 6, title: "Data Governance Policies", duration: "23 min" },
-      { id: 7, title: "Vendor Management", duration: "20 min" },
-      { id: 8, title: "Data Audit & Compliance", duration: "22 min" }
-    ]
-  }
+const ACHIEVEMENTS = [
+  { id: 'first_lesson', name: 'First Step', description: 'Complete your first lesson', icon: '🎯' },
+  { id: 'module_master', name: 'Module Master', description: 'Complete all lessons in a module', icon: '🏆' },
+  { id: 'quiz_ace', name: 'Quiz Ace', description: 'Score 100% on a quiz', icon: '⭐' },
+  { id: 'streak_7', name: 'On Fire', description: 'Maintain a 7-day streak', icon: '🔥' },
+  { id: 'all_modules', name: 'Cybersecurity Expert', description: 'Complete all modules', icon: '👑' },
+  { id: 'certified', name: 'Certified Professional', description: 'Earn your first certificate', icon: '📜' },
 ];
-
-const ACHIEVEMENTS = {
-  FIRST_LESSON: { id: 'first_lesson', name: 'Getting Started', description: 'Complete your first lesson', points: 10, icon: '🎯' },
-  MODULE_COMPLETE: { id: 'module_complete', name: 'Module Master', description: 'Complete an entire module', points: 50, icon: '🏆' },
-  QUIZ_PERFECT: { id: 'quiz_perfect', name: 'Perfect Score', description: 'Get 100% on a quiz', points: 25, icon: '⭐' },
-  STREAK_3: { id: 'streak_3', name: 'Learning Streak', description: 'Complete 3 lessons in a row', points: 30, icon: '🔥' },
-  KNOWLEDGE_SEEKER: { id: 'knowledge_seeker', name: 'Knowledge Seeker', description: 'Complete all modules', points: 100, icon: '🎓' }
-};
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const [, setLocation] = useLocation();
-  const [progress, setProgress] = useState<Progress>(() => {
-    const saved = localStorage.getItem('ocs_progress');
-    return saved ? JSON.parse(saved) : {
-      completedLessons: [],
-      completedQuizzes: [],
-      achievements: [],
-      points: 0,
-      streak: 0,
-      lastActivity: null
-    };
+  const [progress, setProgress] = useState<Progress>({
+    completedLessons: [],
+    completedQuizzes: [],
+    achievements: [],
+    points: 0,
+    streak: 0,
+    lastActivity: null
   });
-  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const saved = localStorage.getItem('ocs_progress');
+    if (saved) {
+      setProgress(JSON.parse(saved));
+    }
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const totalLessons = modules.reduce((acc, m) => acc + m.lessons.length, 0);
+  const completionPercentage = totalLessons > 0 ? (progress.completedLessons.length / totalLessons) * 100 : 0;
 
   const handleLogout = () => {
     logout();
     setLocation('/auth');
   };
-
-  const totalLessons = MODULES.reduce((acc, module) => acc + module.lessons.length, 0);
-  const completedLessons = progress.completedLessons.length;
-  const overallProgress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
@@ -155,20 +60,16 @@ export default function Dashboard() {
             <span className="text-2xl">🛡️</span>
             <h1 className="text-2xl font-bold text-gray-900">Ontario CyberSafe</h1>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">🏆</span>
-              <span className="font-semibold text-gray-900">{progress.points} pts</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                <p className="text-xs text-gray-600">{user?.organization}</p>
-              </div>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                Logout
-              </Button>
-            </div>
+          <div className="flex items-center gap-4">
+            <Button variant="outline" onClick={() => setLocation('/profile')}>
+              My Profile
+            </Button>
+            <Button variant="outline" onClick={() => setLocation('/certificates')}>
+              Certificates
+            </Button>
+            <Button variant="destructive" onClick={handleLogout}>
+              Logout
+            </Button>
           </div>
         </div>
       </header>
@@ -176,128 +77,141 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-2">Welcome back, {user?.name}!</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.name}!</h2>
           <p className="text-gray-600">Continue your cybersecurity training journey</p>
         </div>
 
-        {/* Overall Progress */}
-        <Card className="mb-8">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Overall Progress</h3>
-              <span className="text-gray-600">{completedLessons} of {totalLessons} lessons completed</span>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Lessons Completed</p>
+                <p className="text-3xl font-bold text-blue-600">{progress.completedLessons.length}</p>
+              </div>
+              <BookOpen className="w-8 h-8 text-blue-300" />
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-              <div 
-                className="bg-blue-600 h-full transition-all duration-300"
-                style={{ width: `${overallProgress}%` }}
-              ></div>
-            </div>
-            <p className="text-gray-600 mt-2">{Math.round(overallProgress)}% complete</p>
-          </div>
-        </Card>
+          </Card>
 
-        {/* Achievements */}
-        {progress.achievements.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Recent Achievements</h3>
-            <div className="flex flex-wrap gap-4">
-              {progress.achievements.slice(-3).map(achievementId => {
-                const achievement = Object.values(ACHIEVEMENTS).find(a => a.id === achievementId);
-                if (!achievement) return null;
-                return (
-                  <Card key={achievementId} className="p-4">
-                    <div className="text-center">
-                      <div className="text-3xl mb-2">{achievement.icon}</div>
-                      <p className="font-semibold text-gray-900 text-sm">{achievement.name}</p>
-                      <p className="text-xs text-gray-600">{achievement.points} pts</p>
-                    </div>
-                  </Card>
-                );
-              })}
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Points Earned</p>
+                <p className="text-3xl font-bold text-green-600">{progress.points}</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-green-300" />
             </div>
+          </Card>
+
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Achievements</p>
+                <p className="text-3xl font-bold text-purple-600">{progress.achievements.length}</p>
+              </div>
+              <Award className="w-8 h-8 text-purple-300" />
+            </div>
+          </Card>
+
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Current Streak</p>
+                <p className="text-3xl font-bold text-orange-600">{progress.streak}</p>
+              </div>
+              <Trophy className="w-8 h-8 text-orange-300" />
+            </div>
+          </Card>
+        </div>
+
+        {/* Overall Progress */}
+        <Card className="mb-8 p-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Overall Progress</h3>
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-semibold text-gray-900">Completion Rate</span>
+            <span className="text-gray-600">{Math.round(completionPercentage)}%</span>
           </div>
-        )}
+          <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+            <div 
+              className="bg-gradient-to-r from-blue-600 to-teal-600 h-full transition-all duration-300"
+              style={{ width: `${completionPercentage}%` }}
+            ></div>
+          </div>
+          <p className="text-sm text-gray-600 mt-2">
+            {progress.completedLessons.length} of {totalLessons} lessons completed
+          </p>
+        </Card>
 
         {/* Modules Grid */}
         <div className="mb-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Training Modules</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {MODULES.map((module) => {
-              const moduleProgress = module.lessons.filter(lesson => 
-                progress.completedLessons.includes(`${module.id}-${lesson.id}`)
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">Learning Modules</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {modules.map((module) => {
+              const completed = progress.completedLessons.filter(
+                lesson => lesson.startsWith(`${module.id}-`)
               ).length;
-              const modulePercentage = module.lessons.length > 0 ? (moduleProgress / module.lessons.length) * 100 : 0;
+              const completionPercentage = (completed / module.lessons.length) * 100;
+              const firstLesson = module.lessons[0];
 
               return (
-                <Card key={module.id} className="hover:shadow-lg transition-shadow">
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-4xl">{module.icon}</span>
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                        modulePercentage === 100 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-blue-100 text-blue-800'
-                      }`}>
-                        {modulePercentage === 100 ? "Complete" : `${Math.round(modulePercentage)}%`}
-                      </span>
+                <Card key={module.id} className="p-6 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <div className="text-3xl mb-2">{module.icon}</div>
+                      <h3 className="text-xl font-bold text-gray-900">{module.title}</h3>
+                      <p className="text-sm text-gray-600 mt-1">{module.lessons.length} lessons</p>
                     </div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-2">{module.title}</h4>
-                    <p className="text-sm text-gray-600 mb-4">{module.description}</p>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mb-3 overflow-hidden">
-                      <div 
-                        className="bg-blue-600 h-full transition-all duration-300"
-                        style={{ width: `${modulePercentage}%` }}
-                      ></div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-blue-600">{Math.round(completionPercentage)}%</div>
+                      <p className="text-xs text-gray-600">Complete</p>
                     </div>
-                    <p className="text-xs text-gray-600 mb-4">
-                      {moduleProgress} of {module.lessons.length} lessons
-                    </p>
-                    <Button className="w-full" variant="default">
-                      {modulePercentage > 0 ? "Continue" : "Start"} Module
-                    </Button>
                   </div>
+
+                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden mb-4">
+                    <div
+                      className="bg-blue-600 h-full transition-all duration-300"
+                      style={{ width: `${completionPercentage}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {completed} of {module.lessons.length} lessons completed
+                  </p>
+                  <Button
+                    onClick={() => setLocation(`/lesson/${module.id}/${firstLesson.id}`)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    {completed > 0 ? 'Continue Learning' : 'Start Learning'}
+                  </Button>
                 </Card>
               );
             })}
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="p-6 text-center">
-            <div className="text-3xl mb-2">📖</div>
-            <p className="text-3xl font-bold text-gray-900">{completedLessons}</p>
-            <p className="text-sm text-gray-600">Lessons Completed</p>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl mb-2">🏆</div>
-            <p className="text-3xl font-bold text-gray-900">{progress.points}</p>
-            <p className="text-sm text-gray-600">Points Earned</p>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl mb-2">🎖️</div>
-            <p className="text-3xl font-bold text-gray-900">{progress.achievements.length}</p>
-            <p className="text-sm text-gray-600">Achievements</p>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl mb-2">🔥</div>
-            <p className="text-3xl font-bold text-gray-900">{progress.streak}</p>
-            <p className="text-sm text-gray-600">Current Streak</p>
-          </Card>
-        </div>
+        {/* Achievements Section */}
+        <Card className="p-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">Achievements</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {ACHIEVEMENTS.map((achievement) => {
+              const earned = progress.achievements.includes(achievement.id);
+              return (
+                <div
+                  key={achievement.id}
+                  className={`p-4 rounded-lg text-center transition-all ${
+                    earned
+                      ? 'bg-yellow-50 border-2 border-yellow-300'
+                      : 'bg-gray-50 border-2 border-gray-200 opacity-50'
+                  }`}
+                >
+                  <div className="text-3xl mb-2">{achievement.icon}</div>
+                  <p className="font-semibold text-gray-900 text-sm">{achievement.name}</p>
+                  <p className="text-xs text-gray-600 mt-1">{achievement.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
       </main>
-
-      {/* Scroll to Top Button */}
-      {showScrollTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-          aria-label="Scroll to top"
-        >
-          ↑
-        </button>
-      )}
     </div>
   );
 }

@@ -8,6 +8,9 @@ import Home from "./pages/Home";
 import AuthPage from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ProfilePage from "./pages/Profile";
+import LessonPage from "./pages/Lesson";
+import QuizPage from "./pages/Quiz";
+import CertificatePage from "./pages/Certificate";
 import NotFound from "./pages/NotFound";
 import { ReactNode } from "react";
 
@@ -46,6 +49,21 @@ function Router() {
       <Route path="/profile">
         <ProtectedRoute>
           <ProfilePage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/lesson/:moduleId/:lessonId">
+        <ProtectedRoute>
+          <LessonPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/quiz/:moduleId">
+        <ProtectedRoute>
+          <QuizPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/certificates">
+        <ProtectedRoute>
+          <CertificatePage />
         </ProtectedRoute>
       </Route>
       <Route path="/404" component={NotFound} />
