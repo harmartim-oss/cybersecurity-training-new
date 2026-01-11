@@ -4,7 +4,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import Home from "./pages/Home";
+import Landing from "./pages/Landing";
 import AuthPage from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ProfilePage from "./pages/Profile";
@@ -39,7 +39,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={Landing} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/dashboard">
         <ProtectedRoute>

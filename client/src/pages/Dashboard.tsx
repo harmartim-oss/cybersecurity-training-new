@@ -61,6 +61,9 @@ export default function Dashboard() {
             <h1 className="text-2xl font-bold text-gray-900">Ontario CyberSafe</h1>
           </div>
           <div className="flex items-center gap-4">
+            <Button variant="outline" onClick={() => setLocation('/')}>
+              🏠 Home
+            </Button>
             <Button variant="outline" onClick={() => setLocation('/profile')}>
               My Profile
             </Button>
