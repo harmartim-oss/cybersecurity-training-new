@@ -1,13 +1,24 @@
+import { useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { trackButtonClick, trackSectionView, trackConversion } from '@/lib/analytics';
 
 export default function Landing() {
   const [, setLocation] = useLocation();
   const { isAuthenticated } = useAuth();
+  useAnalytics('landing_page', 'Ontario CyberSafe - Home');
+
+  // Track section views on mount
+  useEffect(() => {
+    trackSectionView('landing_page_loaded');
+  }, []);
 
   const handleGetStarted = () => {
+    trackButtonClick('get_started', 'hero_section');
+    trackConversion('cta_click', 1);
     if (isAuthenticated) {
       setLocation('/dashboard');
     } else {
@@ -16,7 +27,19 @@ export default function Landing() {
   };
 
   const handleWatchDemo = () => {
+    trackButtonClick('explore_features', 'hero_section');
     document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleNavClick = (section: string) => {
+    trackButtonClick(`nav_${section}`, 'header_navigation');
+    document.getElementById(section)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handlePricingClick = (tier: string) => {
+    trackButtonClick(`pricing_${tier}`, 'pricing_section');
+    trackConversion(`pricing_tier_${tier}`, 1);
+    handleGetStarted();
   };
 
   return (
@@ -27,19 +50,19 @@ export default function Landing() {
           <div className="text-2xl font-bold">🛡️ Ontario CyberSafe</div>
           <div className="flex gap-4">
             <button 
-              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => handleNavClick('features')}
               className="text-white hover:opacity-80 transition"
             >
               Features
             </button>
             <button 
-              onClick={() => document.getElementById('modules')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => handleNavClick('modules')}
               className="text-white hover:opacity-80 transition"
             >
               Modules
             </button>
             <button 
-              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => handleNavClick('pricing')}
               className="text-white hover:opacity-80 transition"
             >
               Pricing
@@ -244,7 +267,7 @@ export default function Landing() {
                   <span>Lifetime access</span>
                 </li>
               </ul>
-              <Button onClick={handleGetStarted} className="w-full bg-blue-700 hover:bg-blue-800">
+              <Button onClick={() => handlePricingClick('individual')} className="w-full bg-blue-700 hover:bg-blue-800">
                 Get Started
               </Button>
             </Card>
@@ -275,7 +298,7 @@ export default function Landing() {
                   <span>Compliance reports</span>
                 </li>
               </ul>
-              <Button onClick={handleGetStarted} className="w-full bg-teal-600 hover:bg-teal-700">
+              <Button onClick={() => handlePricingClick('team')} className="w-full bg-teal-600 hover:bg-teal-700">
                 Start Free Trial
               </Button>
             </Card>
@@ -306,7 +329,7 @@ export default function Landing() {
                   <span>API access</span>
                 </li>
               </ul>
-              <Button onClick={handleGetStarted} className="w-full bg-blue-700 hover:bg-blue-800">
+              <Button onClick={() => handlePricingClick('enterprise')} className="w-full bg-blue-700 hover:bg-blue-800">
                 Contact Sales
               </Button>
             </Card>

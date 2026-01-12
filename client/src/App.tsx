@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch } from "wouter";
@@ -5,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Landing from "./pages/Landing";
+import { initializeAnalytics } from "./lib/analytics";
 import AuthPage from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ProfilePage from "./pages/Profile";
@@ -37,6 +39,14 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 }
 
 function Router() {
+  // Initialize Google Analytics
+  useEffect(() => {
+    const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+    if (measurementId) {
+      initializeAnalytics(measurementId);
+    }
+  }, []);
+
   return (
     <Switch>
       <Route path="/" component={Landing} />
