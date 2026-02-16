@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, useRoute } from 'wouter';
 import { useAuth } from '@/contexts/AuthContext';
 import { modules } from '@/data/lessonContent';
 import { Button } from '@/components/ui/button';
@@ -20,27 +20,17 @@ import {
   TrendingUp
 } from 'lucide-react';
 
-interface LessonParams {
-  moduleId: string;
-  lessonId: string;
-}
-
 export default function LessonPage() {
   const [, setLocation] = useLocation();
+  const [match, params] = useRoute('/lesson/:moduleId/:lessonId');
   const { user } = useAuth();
-  const [params, setParams] = useState<LessonParams | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [progress, setProgress] = useState<any>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
 
+  // Load progress from localStorage
   useEffect(() => {
-    const path = window.location.pathname;
-    const match = path.match(/\/lesson\/(\d+)\/(\d+)/);
-    if (match) {
-      setParams({ moduleId: match[1], lessonId: match[2] });
-    }
-
     const savedProgress = localStorage.getItem('ocs_progress');
     if (savedProgress) {
       setProgress(JSON.parse(savedProgress));
@@ -63,7 +53,7 @@ export default function LessonPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (!params) {
+  if (!match || !params) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
         <div className="text-center">
@@ -126,6 +116,7 @@ export default function LessonPage() {
       const nextLesson = module.lessons[currentLessonIndex + 1];
       setLocation(`/lesson/${moduleId}/${nextLesson.id}`);
     } else {
+      // Last lesson - go to quiz
       setLocation(`/quiz/${moduleId}`);
     }
   };
@@ -271,20 +262,8 @@ export default function LessonPage() {
               prose-li:text-gray-700 
               prose-strong:text-gray-900 prose-strong:font-semibold
               prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 prose-blockquote:pl-4 prose-blockquote:py-2 prose-blockquote:italic
-              prose-code:bg-gray-900 prose-code:text-green-400 prose-code:px-2 prose-code:py-1 prose-code:rounded">
-              <ReactMarkdown
-                components={{
-                  h2: ({node, ...props}) => <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4 pb-2 border-b-2 border-blue-200" {...props} />,
-                  h3: ({node, ...props}) => <h3 className="text-xl font-bold text-gray-800 mt-6 mb-3 text-teal-700" {...props} />,
-                  p: ({node, ...props}) => <p className="text-gray-700 mb-4 leading-relaxed" {...props} />,
-                  ul: ({node, ...props}) => <ul className="list-disc list-inside space-y-2 mb-4 text-gray-700" {...props} />,
-                  ol: ({node, ...props}) => <ol className="list-decimal list-inside space-y-2 mb-4 text-gray-700" {...props} />,
-                  blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-blue-500 bg-blue-50 pl-4 py-2 italic text-gray-600 my-4 rounded" {...props} />,
-                  code: ({node, ...props}) => <code className="bg-gray-900 text-green-400 px-2 py-1 rounded font-mono text-sm" {...props} />,
-                }}
-              >
-                {lesson.content}
-              </ReactMarkdown>
+            ">
+              <ReactMarkdown>{lesson.content}</ReactMarkdown>
             </div>
           </div>
         </Card>
@@ -300,52 +279,33 @@ export default function LessonPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {lesson.keyPoints.map((point, idx) => (
-                <div key={idx} className="flex gap-3 p-4 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-lg border border-amber-200 hover:shadow-md hover:border-amber-400 transition-all duration-300 group">
-                  <span className="flex-shrink-0 text-amber-600 font-bold text-lg mt-0.5 group-hover:scale-125 transition-transform duration-300">✓</span>
-                  <span className="text-gray-700 group-hover:text-gray-900 transition-colors">{point}</span>
+                <div key={idx} className="flex gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200 hover:shadow-md transition-shadow">
+                  <CheckCircle2 className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">{point}</span>
                 </div>
               ))}
             </div>
           </div>
         </Card>
 
-        {/* Completion Section */}
-        <Card className={`mb-8 border-2 transition-all duration-500 ${
-          isLessonCompleted 
-            ? 'bg-gradient-to-r from-green-50 to-teal-50 border-green-300 shadow-lg' 
-            : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'
-        }`}>
-          <div className="p-8 text-center">
-            {isLessonCompleted ? (
-              <div className="animate-in fade-in duration-500">
-                <div className="flex justify-center mb-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-green-400 rounded-full blur-lg opacity-50 animate-pulse" />
-                    <CheckCircle2 className="w-16 h-16 text-green-600 relative" />
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Lesson Completed! 🎉</h3>
-                <p className="text-gray-600 mb-2">Great job! You've earned 10 points for completing this lesson.</p>
-                <p className="text-sm text-gray-500">Total Points: {progress?.points || 0}</p>
-              </div>
-            ) : (
-              <div>
-                <div className="flex justify-center mb-4">
-                  <BookOpen className="w-16 h-16 text-blue-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Ready to Complete This Lesson?</h3>
-                <p className="text-gray-600 mb-6">Mark this lesson as complete to earn 10 points and track your progress.</p>
-                <Button 
-                  onClick={handleMarkComplete}
-                  className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <CheckCircle2 className="w-5 h-5 mr-2" />
-                  Mark Lesson as Complete
-                </Button>
-              </div>
-            )}
-          </div>
-        </Card>
+
+
+        {/* Completion Button */}
+        {!isLessonCompleted && (
+          <Card className="mb-8 bg-gradient-to-r from-green-50 to-teal-50 border-2 border-green-200 hover:shadow-lg transition-shadow duration-300">
+            <div className="p-6 text-center">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Finished this lesson?</h3>
+              <p className="text-gray-600 mb-4">Mark this lesson as complete to earn points and track your progress.</p>
+              <Button 
+                onClick={handleMarkComplete}
+                className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Mark as Complete
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {/* Navigation Buttons */}
         <div className="flex items-center justify-between gap-4 mb-8">
@@ -353,21 +313,28 @@ export default function LessonPage() {
             onClick={handlePreviousLesson}
             disabled={currentLessonIndex === 0}
             variant="outline"
-            className="flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-50"
+            className="flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-50 transition-all duration-300"
           >
             <ChevronLeft className="w-4 h-4" />
-            Previous Lesson
+            <span className="hidden sm:inline">Previous Lesson</span>
+            <span className="sm:hidden">Previous</span>
           </Button>
           
           <div className="text-center text-sm text-gray-600">
-            Lesson {currentLessonIndex + 1} of {totalLessons}
+            <p className="font-semibold">Lesson {currentLessonIndex + 1} of {totalLessons}</p>
+            <p className="text-xs">{Math.round(progressPercentage)}% Complete</p>
           </div>
 
           <Button 
             onClick={handleNextLesson}
             className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            {currentLessonIndex === totalLessons - 1 ? 'Take Quiz' : 'Next Lesson'}
+            <span className="hidden sm:inline">
+              {currentLessonIndex === totalLessons - 1 ? 'Take Quiz' : 'Next Lesson'}
+            </span>
+            <span className="sm:hidden">
+              {currentLessonIndex === totalLessons - 1 ? 'Quiz' : 'Next'}
+            </span>
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
