@@ -73,13 +73,16 @@ export default function LessonPage() {
   const lessonKey = `${moduleId}-${lessonId}`;
 
   if (!module || !lesson) {
+    console.error(`Lesson not found: Module ${moduleId}, Lesson ${lessonId}`);
+    console.error('Available modules:', modules.map(m => ({ id: m.id, lessons: m.lessons.map(l => l.id) })));
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <div className="p-8 text-center">
             <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Lesson Not Found</h1>
-            <p className="text-gray-600 mb-6">We couldn't find the lesson you're looking for.</p>
+            <p className="text-gray-600 mb-2">We couldn't find the lesson you're looking for.</p>
+            <p className="text-sm text-gray-500 mb-6">Module: {moduleId}, Lesson: {lessonId}</p>
             <Button onClick={() => setLocation('/dashboard')} className="w-full">
               Back to Dashboard
             </Button>
@@ -87,6 +90,17 @@ export default function LessonPage() {
         </Card>
       </div>
     );
+  }
+
+  // Additional safety checks for lesson properties
+  if (!lesson.learningObjectives || !Array.isArray(lesson.learningObjectives)) {
+    console.error('Missing or invalid learningObjectives for lesson:', lessonId);
+    lesson.learningObjectives = [];
+  }
+
+  if (!lesson.keyPoints || !Array.isArray(lesson.keyPoints)) {
+    console.error('Missing or invalid keyPoints for lesson:', lessonId);
+    lesson.keyPoints = [];
   }
 
   const handleMarkComplete = () => {
@@ -241,7 +255,7 @@ export default function LessonPage() {
             </div>
             <p className="text-gray-600 mb-4">By the end of this lesson, you will be able to:</p>
             <ul className="space-y-3">
-              {lesson.learningObjectives.map((objective, idx) => (
+              {(lesson.learningObjectives || []).map((objective: string, idx: number) => (
                 <li key={idx} className="flex items-start gap-3 group">
                   <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 text-blue-600 flex items-center justify-center text-sm font-bold mt-0.5 group-hover:scale-110 transition-transform duration-300">
                     {idx + 1}
@@ -278,7 +292,7 @@ export default function LessonPage() {
               <h2 className="text-2xl font-bold text-gray-900">Key Points to Remember</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {lesson.keyPoints.map((point, idx) => (
+              {(lesson.keyPoints || []).map((point: string, idx: number) => (
                 <div key={idx} className="flex gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200 hover:shadow-md transition-shadow">
                   <CheckCircle2 className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                   <span className="text-gray-700">{point}</span>
