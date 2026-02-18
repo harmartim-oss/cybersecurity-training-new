@@ -311,7 +311,7 @@ export const module2VisualContent: VisualLessonContent[] = [
         id: 'inf2-1-1',
         title: 'CIA Triad Explained',
         description: 'Visual representation of Confidentiality, Integrity, and Availability',
-        imageUrl: 'https://via.placeholder.com/800x600?text=CIA+Triad',
+        imageUrl: 'https://private-us-east-1.manuscdn.com/sessionFile/qzg8D1TqXXMHDtCShUkLmb/sandbox/95D8rwFT6l5g3PoQrDTL2x-img-1_1771446226000_na1fn_Y2lhLXRyaWFkLWluZm9ncmFwaGlj.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80',
         altText: 'CIA Triad security model',
         caption: 'The CIA Triad is the foundation of cybersecurity principles'
       }
@@ -445,7 +445,7 @@ export const module3VisualContent: VisualLessonContent[] = [
         id: 'inf3-1-1',
         title: 'AI Ethics Framework',
         description: 'Core principles of responsible AI development and deployment',
-        imageUrl: 'https://via.placeholder.com/800x600?text=AI+Ethics',
+        imageUrl: 'https://private-us-east-1.manuscdn.com/sessionFile/qzg8D1TqXXMHDtCShUkLmb/sandbox/95D8rwFT6l5g3PoQrDTL2x-img-5_1771446220000_na1fn_YWktZXRoaWNzLXByaW5jaXBsZXM.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80',
         altText: 'AI ethics framework diagram',
         caption: 'Ethical AI requires attention to fairness, transparency, and accountability'
       }
@@ -573,7 +573,7 @@ export const module4VisualContent: VisualLessonContent[] = [
         id: 'inf4-1-1',
         title: 'Data Governance Framework',
         description: 'Complete data governance structure and components',
-        imageUrl: 'https://via.placeholder.com/800x600?text=Data+Governance',
+        imageUrl: 'https://private-us-east-1.manuscdn.com/sessionFile/qzg8D1TqXXMHDtCShUkLmb/sandbox/95D8rwFT6l5g3PoQrDTL2x-img-4_1771446228000_na1fn_ZGF0YS1nb3Zlcm5hbmNlLWZyYW1ld29yaw.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80',
         altText: 'Data governance framework diagram',
         caption: 'Effective data governance requires clear roles, policies, and processes'
       }

@@ -19,6 +19,26 @@ import {
   Award,
   TrendingUp
 } from 'lucide-react';
+import { getVisualLessonContent } from '@/data/visualLessonData';
+import {
+  ComparisonTable,
+  Timeline,
+  ProcessFlow,
+  InfoBox,
+  WarningBox,
+  TipBox,
+  StatisticsGrid,
+  ExpandableSection,
+  LearningObjectivesVisual,
+  KeyPointsVisual,
+  SectionDivider
+} from '@/components/training/VisualEnhancedComponents';
+import {
+  VideoPlayer,
+  Infographic,
+  ImageGallery,
+  DownloadableResources
+} from '@/components/training/MultimediaIntegration';
 
 export default function LessonPage() {
   const [, setLocation] = useLocation();
@@ -283,24 +303,116 @@ export default function LessonPage() {
         </Card>
 
         {/* Key Points */}
-        <Card className="mb-8 border-l-4 border-l-amber-500 hover:shadow-lg transition-shadow duration-300">
-          <div className="p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-amber-100 rounded-lg">
-                <Lightbulb className="w-6 h-6 text-amber-600" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900">Key Points to Remember</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(lesson.keyPoints || []).map((point: string, idx: number) => (
-                <div key={idx} className="flex gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200 hover:shadow-md transition-shadow">
-                  <CheckCircle2 className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">{point}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
+        <KeyPointsVisual points={lesson.keyPoints || []} />
+
+        {/* Visual Content - Infographics, Videos, Timelines */}
+        {(() => {
+          const visualContent = getVisualLessonContent(moduleId, lessonId);
+          if (!visualContent) return null;
+
+          return (
+            <>
+              {/* Infographics Section */}
+              {visualContent.infographics && visualContent.infographics.length > 0 && (
+                <>
+                  <SectionDivider title="Visual Learning Materials" />
+                  {visualContent.infographics.map((infographic) => (
+                    <Infographic
+                      key={infographic.id}
+                      title={infographic.title}
+                      description={infographic.description}
+                      imageUrl={infographic.imageUrl}
+                      altText={infographic.altText}
+                      caption={infographic.caption}
+                    />
+                  ))}
+                </>
+              )}
+
+              {/* Videos Section */}
+              {visualContent.videos && visualContent.videos.length > 0 && (
+                <>
+                  <SectionDivider title="Video Tutorials" />
+                  {visualContent.videos.map((video) => (
+                    <VideoPlayer
+                      key={video.id}
+                      title={video.title}
+                      description={video.description}
+                      videoUrl={video.videoUrl}
+                      duration={video.duration}
+                      thumbnail={video.thumbnail}
+                    />
+                  ))}
+                </>
+              )}
+
+              {/* Timeline Section */}
+              {visualContent.timelines && visualContent.timelines.length > 0 && (
+                <>
+                  <SectionDivider title="Historical Context" />
+                  <Timeline
+                    items={visualContent.timelines.map((item) => ({
+                      year: item.year,
+                      title: item.title,
+                      description: item.description,
+                      icon: item.icon
+                    }))}
+                    title="Timeline"
+                  />
+                </>
+              )}
+
+              {/* Process Flow Section */}
+              {visualContent.processFlows && visualContent.processFlows.length > 0 && (
+                <>
+                  <SectionDivider title="Process Overview" />
+                  <ProcessFlow
+                    steps={visualContent.processFlows.map((step) => ({
+                      number: step.number,
+                      title: step.title,
+                      description: step.description,
+                      icon: step.icon
+                    }))}
+                    title="Step-by-Step Process"
+                  />
+                </>
+              )}
+
+              {/* Comparison Tables Section */}
+              {visualContent.comparisonTables && visualContent.comparisonTables.length > 0 && (
+                <>
+                  <SectionDivider title="Best Practices" />
+                  <ComparisonTable
+                    items={visualContent.comparisonTables}
+                    title="Best Practices vs Common Mistakes"
+                  />
+                </>
+              )}
+
+              {/* Statistics Section */}
+              {visualContent.statistics && visualContent.statistics.length > 0 && (
+                <>
+                  <SectionDivider title="Key Statistics" />
+                  <StatisticsGrid
+                    stats={visualContent.statistics}
+                    title="Important Metrics"
+                  />
+                </>
+              )}
+
+              {/* Resources Section */}
+              {visualContent.resources && visualContent.resources.length > 0 && (
+                <>
+                  <SectionDivider title="Downloadable Resources" />
+                  <DownloadableResources
+                    title="Study Materials"
+                    resources={visualContent.resources}
+                  />
+                </>
+              )}
+            </>
+          );
+        })()}
 
 
 
