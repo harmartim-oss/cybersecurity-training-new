@@ -265,7 +265,7 @@ export default function LessonPage() {
         </div>
 
         {/* Learning Objectives */}
-        <Card className="mb-8 border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow duration-300">
+        <Card className="mb-6 border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow duration-300">
           <div className="p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-blue-100 rounded-lg">
@@ -287,6 +287,9 @@ export default function LessonPage() {
           </div>
         </Card>
 
+        {/* Key Points - Moved to prominent position */}
+        <KeyPointsVisual points={lesson.keyPoints || []} />
+
         {/* Main Content */}
         <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300">
           <div className="p-8 bg-gradient-to-br from-white to-blue-50">
@@ -301,9 +304,6 @@ export default function LessonPage() {
             </div>
           </div>
         </Card>
-
-        {/* Key Points */}
-        <KeyPointsVisual points={lesson.keyPoints || []} />
 
         {/* Visual Content - Infographics, Videos, Timelines */}
         {(() => {
@@ -329,22 +329,7 @@ export default function LessonPage() {
                 </>
               )}
 
-              {/* Videos Section */}
-              {visualContent.videos && visualContent.videos.length > 0 && (
-                <>
-                  <SectionDivider title="Video Tutorials" />
-                  {visualContent.videos.map((video) => (
-                    <VideoPlayer
-                      key={video.id}
-                      title={video.title}
-                      description={video.description}
-                      videoUrl={video.videoUrl}
-                      duration={video.duration}
-                      thumbnail={video.thumbnail}
-                    />
-                  ))}
-                </>
-              )}
+
 
               {/* Timeline Section */}
               {visualContent.timelines && visualContent.timelines.length > 0 && (

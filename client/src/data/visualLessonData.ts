@@ -5,7 +5,6 @@ export interface VisualLessonContent {
   moduleId: number;
   lessonId: number;
   infographics: InfographicData[];
-  videos: VideoData[];
   timelines: TimelineData[];
   processFlows: ProcessFlowData[];
   comparisonTables: ComparisonTableData[];
@@ -22,14 +21,7 @@ export interface InfographicData {
   caption: string;
 }
 
-export interface VideoData {
-  id: string;
-  title: string;
-  description: string;
-  videoUrl: string;
-  duration: string;
-  thumbnail: string;
-}
+
 
 export interface TimelineData {
   id: string;
@@ -86,16 +78,6 @@ export const module1VisualContent: VisualLessonContent[] = [
         imageUrl: 'https://via.placeholder.com/800x600?text=Privacy+Laws+Comparison',
         altText: 'Comparison of Ontario privacy laws',
         caption: 'FIPPA applies to provincial government, MFIPPA to municipalities, and PIPEDA to private sector'
-      }
-    ],
-    videos: [
-      {
-        id: 'vid1-1-1',
-        title: 'Introduction to Ontario Privacy Laws',
-        description: 'Overview of the three major privacy laws governing Ontario',
-        videoUrl: 'https://example.com/videos/privacy-laws-intro.mp4',
-        duration: '8:45',
-        thumbnail: 'https://via.placeholder.com/320x180?text=Privacy+Laws'
       }
     ],
     timelines: [
@@ -186,16 +168,6 @@ export const module1VisualContent: VisualLessonContent[] = [
         imageUrl: 'https://via.placeholder.com/800x600?text=FIPPA+Process',
         altText: 'FIPPA access request process flow',
         caption: 'Organizations must respond to access requests within 30 days'
-      }
-    ],
-    videos: [
-      {
-        id: 'vid1-2-1',
-        title: 'FIPPA Deep Dive',
-        description: 'Detailed exploration of FIPPA requirements and exemptions',
-        videoUrl: 'https://example.com/videos/fippa-deep-dive.mp4',
-        duration: '12:30',
-        thumbnail: 'https://via.placeholder.com/320x180?text=FIPPA'
       }
     ],
     timelines: [
@@ -314,16 +286,6 @@ export const module2VisualContent: VisualLessonContent[] = [
         imageUrl: 'https://private-us-east-1.manuscdn.com/sessionFile/qzg8D1TqXXMHDtCShUkLmb/sandbox/95D8rwFT6l5g3PoQrDTL2x-img-1_1771446226000_na1fn_Y2lhLXRyaWFkLWluZm9ncmFwaGlj.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80',
         altText: 'CIA Triad security model',
         caption: 'The CIA Triad is the foundation of cybersecurity principles'
-      }
-    ],
-    videos: [
-      {
-        id: 'vid2-1-1',
-        title: 'Cybersecurity Fundamentals',
-        description: 'Introduction to core cybersecurity concepts and principles',
-        videoUrl: 'https://example.com/videos/cybersecurity-basics.mp4',
-        duration: '10:15',
-        thumbnail: 'https://via.placeholder.com/320x180?text=Cybersecurity'
       }
     ],
     timelines: [
@@ -450,16 +412,6 @@ export const module3VisualContent: VisualLessonContent[] = [
         caption: 'Ethical AI requires attention to fairness, transparency, and accountability'
       }
     ],
-    videos: [
-      {
-        id: 'vid3-1-1',
-        title: 'AI Ethics Fundamentals',
-        description: 'Introduction to ethical considerations in AI systems',
-        videoUrl: 'https://example.com/videos/ai-ethics.mp4',
-        duration: '11:20',
-        thumbnail: 'https://via.placeholder.com/320x180?text=AI+Ethics'
-      }
-    ],
     timelines: [
       {
         id: 'tl3-1-1',
@@ -576,16 +528,6 @@ export const module4VisualContent: VisualLessonContent[] = [
         imageUrl: 'https://private-us-east-1.manuscdn.com/sessionFile/qzg8D1TqXXMHDtCShUkLmb/sandbox/95D8rwFT6l5g3PoQrDTL2x-img-4_1771446228000_na1fn_ZGF0YS1nb3Zlcm5hbmNlLWZyYW1ld29yaw.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80',
         altText: 'Data governance framework diagram',
         caption: 'Effective data governance requires clear roles, policies, and processes'
-      }
-    ],
-    videos: [
-      {
-        id: 'vid4-1-1',
-        title: 'Data Governance Essentials',
-        description: 'Introduction to data governance principles and best practices',
-        videoUrl: 'https://example.com/videos/data-governance.mp4',
-        duration: '9:45',
-        thumbnail: 'https://via.placeholder.com/320x180?text=Data+Governance'
       }
     ],
     timelines: [
