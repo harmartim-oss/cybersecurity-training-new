@@ -39,6 +39,13 @@ import {
   ImageGallery,
   DownloadableResources
 } from '@/components/training/MultimediaIntegration';
+import {
+  CIATriadDiagram,
+  PrivacyLawFrameworkDiagram,
+  ThreatMatrixDiagram,
+  DataGovernanceLifecycleDiagram,
+  AIEthicsPrinciplesDiagram
+} from '@/components/training/InteractiveDiagrams';
 
 export default function LessonPage() {
   const [, setLocation] = useLocation();
