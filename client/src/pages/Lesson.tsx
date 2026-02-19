@@ -47,6 +47,7 @@ import {
   DataGovernanceLifecycleDiagram,
   AIEthicsPrinciplesDiagram
 } from '@/components/training/InteractiveDiagrams';
+import { LessonStudyMaterials } from '@/components/training/LessonStudyMaterials';
 
 export default function LessonPage() {
   const [, setLocation] = useLocation();
@@ -393,12 +394,16 @@ export default function LessonPage() {
                 </>
               )}
 
+              {/* Study Materials Section */}
+              <SectionDivider title="Study Materials" />
+              <LessonStudyMaterials lessonId={lessonId} className="mb-8" />
+
               {/* Resources Section */}
               {visualContent.resources && visualContent.resources.length > 0 && (
                 <>
                   <SectionDivider title="Downloadable Resources" />
                   <DownloadableResources
-                    title="Study Materials"
+                    title="Additional Resources"
                     resources={visualContent.resources}
                   />
                 </>
