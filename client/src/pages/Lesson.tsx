@@ -17,6 +17,7 @@ import {
   ArrowUp,
   Zap,
   Award,
+  Trophy,
   TrendingUp
 } from 'lucide-react';
 import { getVisualLessonContent } from '@/data/visualLessonData';
