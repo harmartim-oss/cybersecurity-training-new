@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
 import { StudyGuide } from '@/data/studyGuides';
 
-export const generateStudyGuidePDF = (studyGuide: StudyGuide): void => {
+export const generateStudyGuidePDF = (studyGuide: StudyGuide): Blob => {
   const pdf = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -172,10 +172,33 @@ export const generateStudyGuidePDF = (studyGuide: StudyGuide): void => {
   pdf.text('© Ontario CyberSafe Certification Platform', margin, pageHeight - 10);
   pdf.setTextColor(0, 0, 0);
 
-  // Save the PDF
-  pdf.save(studyGuide.fileName || 'study-guide.pdf');
+  // Return PDF as Blob
+  return pdf.output('blob') as Blob;
 };
 
 export const downloadStudyGuide = (studyGuide: StudyGuide): void => {
-  generateStudyGuidePDF(studyGuide);
+  try {
+    const pdfBlob = generateStudyGuidePDF(studyGuide);
+    
+    // Create a temporary URL for the blob
+    const url = URL.createObjectURL(pdfBlob);
+    
+    // Create a temporary anchor element
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = studyGuide.fileName || `${studyGuide.moduleName.replace(/\s+/g, '_')}_Study_Guide.pdf`;
+    
+    // Append to body, click, and remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clean up the URL object
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 100);
+  } catch (error) {
+    console.error('Error downloading study guide:', error);
+    alert('Failed to download study guide. Please try again.');
+  }
 };

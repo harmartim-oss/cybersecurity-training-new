@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Download, FileText, BookOpen } from 'lucide-react';
@@ -17,8 +17,18 @@ export const StudyGuideDownload: React.FC<StudyGuideDownloadProps> = ({ moduleId
     return null;
   }
 
-  const handleDownload = () => {
-    downloadStudyGuide(studyGuide);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleDownload = async () => {
+    try {
+      setIsLoading(true);
+      downloadStudyGuide(studyGuide);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Download error:', error);
+      setIsLoading(false);
+      alert('Failed to download study guide. Please try again.');
+    }
   };
 
   return (
@@ -43,10 +53,11 @@ export const StudyGuideDownload: React.FC<StudyGuideDownloadProps> = ({ moduleId
         </div>
         <Button
           onClick={handleDownload}
-          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 whitespace-nowrap"
+          disabled={isLoading}
+          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white flex items-center gap-2 whitespace-nowrap"
         >
           <Download className="w-4 h-4" />
-          Download PDF
+          {isLoading ? 'Generating...' : 'Download PDF'}
         </Button>
       </div>
     </Card>
