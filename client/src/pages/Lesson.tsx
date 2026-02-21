@@ -48,6 +48,14 @@ import {
   AIEthicsPrinciplesDiagram
 } from '@/components/training/InteractiveDiagrams';
 import { LessonStudyMaterials } from '@/components/training/LessonStudyMaterials';
+import {
+  AnimatedObjectives,
+  InteractiveKeyPoints,
+  ExpandableContent,
+  ProgressTracker,
+  AnimatedStats,
+  AnimationStyles
+} from '@/components/training/InteractiveLessonElements';
 
 export default function LessonPage() {
   const [, setLocation] = useLocation();
@@ -273,31 +281,19 @@ export default function LessonPage() {
           </div>
         </div>
 
-        {/* Learning Objectives */}
-        <Card className="mb-6 border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow duration-300">
-          <div className="p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Target className="w-6 h-6 text-blue-600" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900">Learning Objectives</h2>
-            </div>
-            <p className="text-gray-600 mb-4">By the end of this lesson, you will be able to:</p>
-            <ul className="space-y-3">
-              {(lesson.learningObjectives || []).map((objective: string, idx: number) => (
-                <li key={idx} className="flex items-start gap-3 group">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 text-blue-600 flex items-center justify-center text-sm font-bold mt-0.5 group-hover:scale-110 transition-transform duration-300">
-                    {idx + 1}
-                  </span>
-                  <span className="text-gray-700 pt-0.5 group-hover:text-gray-900 transition-colors">{objective}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Card>
+        {/* Animated Learning Objectives */}
+        <AnimatedObjectives objectives={lesson.learningObjectives || []} />
 
-        {/* Key Points - Moved to prominent position */}
-        <KeyPointsVisual points={lesson.keyPoints || []} />
+        {/* Interactive Key Points Carousel */}
+        <InteractiveKeyPoints keyPoints={lesson.keyPoints || []} />
+
+        {/* Progress Tracker */}
+        <ProgressTracker
+          currentLesson={currentLessonIndex + 1}
+          totalLessons={totalLessons}
+          completedLessons={progress?.completedLessons.length || 0}
+          currentModule={module.title}
+        />
 
         {/* Main Content */}
         <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300">
