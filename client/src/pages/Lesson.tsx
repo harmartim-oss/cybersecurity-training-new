@@ -49,6 +49,7 @@ import {
 } from '@/components/training/InteractiveDiagrams';
 import { LessonStudyMaterials } from '@/components/training/LessonStudyMaterials';
 import { AdditionalLessonContent } from '@/components/training/AdditionalLessonContent';
+import { ResourceDownload } from '@/components/training/ResourceDownload';
 import { getAdditionalModule1Content } from '@/data/additionalModule1Content';
 import { getAdditionalModule2Content } from '@/data/additionalModule2Content';
 import { getAdditionalModule3Content } from '@/data/additionalModule3Content';
@@ -424,6 +425,10 @@ export default function LessonPage() {
               {/* Study Materials Section */}
               <SectionDivider title="Study Materials" />
               <LessonStudyMaterials lessonId={lessonId} className="mb-8" />
+
+              {/* Resource Download Section */}
+              <SectionDivider title="Additional Resources" />
+              <ResourceDownload lessonId={lessonId} className="mb-8" />
 
               {/* Additional Content Section */}
               {(() => {
