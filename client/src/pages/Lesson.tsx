@@ -56,6 +56,18 @@ import {
   AnimatedStats,
   AnimationStyles
 } from '@/components/training/InteractiveLessonElements';
+import {
+  ProfessionalContentDisplay
+} from '@/components/training/ProfessionalContentDisplay';
+import {
+  LessonSectionDivider,
+  ContentCard,
+  LessonHeader,
+  ReadingTime,
+  SummaryBox,
+  LessonFooter
+} from '@/components/training/LessonVisualElements';
+import { getImprovedLessonContent } from '@/data/improvedLessonContent';
 
 export default function LessonPage() {
   const [, setLocation] = useLocation();
@@ -295,20 +307,34 @@ export default function LessonPage() {
           currentModule={module.title}
         />
 
-        {/* Main Content */}
-        <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300">
-          <div className="p-8 bg-gradient-to-br from-white to-blue-50">
-            <div className="prose prose-lg max-w-none 
-              prose-headings:text-gray-900 prose-headings:font-bold 
-              prose-p:text-gray-700 prose-p:leading-relaxed 
-              prose-li:text-gray-700 
-              prose-strong:text-gray-900 prose-strong:font-semibold
-              prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 prose-blockquote:pl-4 prose-blockquote:py-2 prose-blockquote:italic
-            ">
-              <ReactMarkdown>{lesson.content}</ReactMarkdown>
-            </div>
-          </div>
-        </Card>
+        {/* Main Content - Using Improved Professional Display */}
+        {(() => {
+          const improvedContent = getImprovedLessonContent(moduleId, lessonId);
+          if (improvedContent && improvedContent.sections.length > 0) {
+            return (
+              <ContentCard variant="default" className="mb-8">
+                <ProfessionalContentDisplay sections={improvedContent.sections} />
+              </ContentCard>
+            );
+          }
+          
+          // Fallback to original markdown content if improved content not available
+          return (
+            <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300">
+              <div className="p-8 bg-gradient-to-br from-white to-blue-50">
+                <div className="prose prose-lg max-w-none 
+                  prose-headings:text-gray-900 prose-headings:font-bold 
+                  prose-p:text-gray-700 prose-p:leading-relaxed 
+                  prose-li:text-gray-700 
+                  prose-strong:text-gray-900 prose-strong:font-semibold
+                  prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 prose-blockquote:pl-4 prose-blockquote:py-2 prose-blockquote:italic
+                ">
+                  <ReactMarkdown>{lesson.content}</ReactMarkdown>
+                </div>
+              </div>
+            </Card>
+          );
+        })()}
 
         {/* Visual Content - Infographics, Videos, Timelines */}
         {(() => {
