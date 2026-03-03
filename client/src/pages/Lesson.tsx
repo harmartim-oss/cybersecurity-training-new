@@ -48,6 +48,11 @@ import {
   AIEthicsPrinciplesDiagram
 } from '@/components/training/InteractiveDiagrams';
 import { LessonStudyMaterials } from '@/components/training/LessonStudyMaterials';
+import { AdditionalLessonContent } from '@/components/training/AdditionalLessonContent';
+import { getAdditionalModule1Content } from '@/data/additionalModule1Content';
+import { getAdditionalModule2Content } from '@/data/additionalModule2Content';
+import { getAdditionalModule3Content } from '@/data/additionalModule3Content';
+import { getAdditionalModule4Content } from '@/data/additionalModule4Content';
 import {
   AnimatedObjectives,
   InteractiveKeyPoints,
@@ -419,6 +424,25 @@ export default function LessonPage() {
               {/* Study Materials Section */}
               <SectionDivider title="Study Materials" />
               <LessonStudyMaterials lessonId={lessonId} className="mb-8" />
+
+              {/* Additional Content Section */}
+              {(() => {
+                let additionalContent = null;
+                if (moduleId === 1) additionalContent = getAdditionalModule1Content(lessonId);
+                else if (moduleId === 2) additionalContent = getAdditionalModule2Content(lessonId);
+                else if (moduleId === 3) additionalContent = getAdditionalModule3Content(lessonId);
+                else if (moduleId === 4) additionalContent = getAdditionalModule4Content(lessonId);
+                
+                if (additionalContent) {
+                  return (
+                    <>
+                      <SectionDivider title="Deep Dive: Advanced Content" />
+                      <AdditionalLessonContent content={additionalContent} />
+                    </>
+                  );
+                }
+                return null;
+              })()}
 
               {/* Resources Section */}
               {visualContent.resources && visualContent.resources.length > 0 && (
